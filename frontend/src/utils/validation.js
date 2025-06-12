@@ -3,6 +3,7 @@ export class Validation {
         let isValid = true;
         let date = {
             nameInputElement: null,
+            lastNameInputElement: null,
             emailInputElement: null,
             passwordInputElement: null,
             passwordReplaceInputElement: null,
@@ -24,11 +25,15 @@ export class Validation {
             if (inputElement.value === '') {
                 fieldValid = false;
             } else {
-                if (inputElement.type === 'text') {
-                    if (!inputElement.value.match(/^[А-ЯЁ][а-яё]*(?:\s[А-ЯЁ][а-яё]*)+$/)) {
+                if (inputElement.id === 'signUpInputName' || inputElement.id === 'signUpInputLastName') {
+                    if (!inputElement.value.match(/^[А-ЯЁ][а-яё]*$/)) {
                         fieldValid = false;
                     } else {
-                        date.nameInputElement = inputElement.value;
+                        if (inputElement.id === 'signUpInputName') {
+                            date.nameInputElement = inputElement.value;
+                        } else {
+                            date.lastNameInputElement = inputElement.value;
+                        }
                     }
                 }
                 if (inputElement.type === 'email') {
@@ -38,17 +43,26 @@ export class Validation {
                         date.emailInputElement = inputElement.value;
                     }
                 }
-                if (inputElement.type === 'password') {
-                    if (!inputElement.value.match(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/) && password === '') {
-                        fieldValid = false;
-                    } else if (password !== '' && inputElement.value !== password) {
+                if (inputElement.id === 'signUpInputPassword') {
+                    // Валидация пароля (минимум 8 символов, хотя бы одна заглавная и одна цифра)
+                    if (!inputElement.value.match(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
                         fieldValid = false;
                     } else {
-                        if (password === '') {
-                            date.passwordInputElement = inputElement.value;
-                        } else {
-                            date.passwordReplaceInputElement = inputElement.value;
+                        date.passwordInputElement = inputElement.value;
+                        this.password = inputElement.value; // Сохраняем пароль для проверки повторного ввода
+                    }
+                }
+                if (inputElement.id === 'signUpInputRepeatPassword') {
+                    // Проверка совпадения паролей
+                    if (inputElement.value !== this.password) {
+                        fieldValid = false;
+                        // Показываем специальное сообщение для несовпадающих паролей
+                        const errorElement = parentInputElement.nextElementSibling;
+                        if (errorElement) {
+                            errorElement.innerText = 'Пароли не совпадают';
                         }
+                    } else {
+                        date.passwordReplaceInputElement = inputElement.value;
                     }
                 }
             }

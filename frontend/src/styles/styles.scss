@@ -72,6 +72,7 @@ input.form-control.logOrSign:focus {
 
 .error {
   display: none;
+  color: red;
 }
 
 .invalid {
@@ -81,7 +82,3 @@ input.form-control.logOrSign:focus {
 .error.invalid {
   display: block;
 }
-
-
-
-

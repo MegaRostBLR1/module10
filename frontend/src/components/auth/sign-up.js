@@ -11,10 +11,14 @@ export class SignUp {
         this.inputsElement = document.querySelectorAll('.form-floating input');
         this.errorSignUp = document.getElementById('error-singUp');
         document.getElementById("singUpBtn").addEventListener("click", this.signUp.bind(this));
+
+        document.getElementById("signUpInputPassword")?.addEventListener("input", (e) => {
+            this.password = e.target.value;
+        });
     }
 
     async signUp() {
-        FormUtils.resetValidationErrors(this.inputsElement);
+        FormUtils.resetValidationErrors(this.inputsElement, this.errorSignUp);
 
         // Проводим валидацию
         const validationResult = Validation.validForm(this.inputsElement, this.password);
@@ -35,7 +39,7 @@ export class SignUp {
                 },
                 body: JSON.stringify({
                     name: validationResult.nameInputElement,
-                    lastName: "    ",
+                    lastName: validationResult.lastNameInputElement,
                     email: validationResult.emailInputElement,
                     password: validationResult.passwordInputElement,
                     passwordRepeat: validationResult.passwordReplaceInputElement

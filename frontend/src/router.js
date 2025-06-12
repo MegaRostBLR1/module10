@@ -175,28 +175,38 @@ export class Router {
 
     async activateRoute() {
         const urlRoute = window.location.pathname;
+        const isAuthenticated = !!localStorage.getItem("accessToken");
         let newRoute = null;
-        if(localStorage.getItem("accessToken")) {
-            newRoute = this.routes.find((route) => route.route === urlRoute);
+
+        // Для неавторизованных пользователей
+        if (!isAuthenticated) {
+            if (urlRoute === '/sign-up') {
+                newRoute = this.routes.find(route => route.route === '/sign-up');
+            } else {
+                newRoute = this.routes.find(route => route.route === '/login');
+            }
         } else {
-            newRoute = this.routes.find((route) => route.route === '/login');
-            if(urlRoute === '/sign-up') {
-                newRoute = this.routes.find((route) => route.route === '/sign-up');
+
+            if (urlRoute === '/login' || urlRoute === '/sign-up') {
+                newRoute = this.routes.find(route => route.route === '/');
+            } else {
+                newRoute = this.routes.find(route => route.route === urlRoute);
             }
-            if(urlRoute === '/login') {
-                newRoute = this.routes.find((route) => route.route === '/login');
-            }
+        }
+
+        if (!newRoute) {
+            newRoute = this.routes.find(route => route.route === '/404');
         }
 
         if (newRoute) {
             if (newRoute.title) {
-                this.titlePageElement.innerText = newRoute.title + '| Lumincoin Finance';
+                this.titlePageElement.innerText = newRoute.title + ' | Lumincoin Finance';
             }
 
             if (newRoute.useLayout) {
                 this.contentElement.innerHTML = await fetch(newRoute.useLayout).then(res => res.text());
                 const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-                document.getElementById('layoutUserName').innerText = userInfo.name;
+                document.getElementById('layoutUserName').innerText = userInfo.name + ' ' + userInfo.lastName;
             } else {
                 this.contentElement.innerHTML = '';
             }
@@ -215,10 +225,28 @@ export class Router {
 
             if(newRoute.useLayout) {
                 new Logout(this.openNewRouteAutomatic.bind(this));
+                this.activateMenuItem(newRoute);
             }
 
         } else {
             window.location = '/404';
         }
+    }
+
+    // функция для выделения активного пункта меню
+    activateMenuItem (route) {
+        // запрашиваем все пункты меню по цепочке классов и используем цикл forEach где в item будет попадать наш nav-link
+        document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+            // получаем в переменную href атрибут href из .nav-link
+            const href = item.getAttribute('href');
+            // проверяем, что в роуте присутствует подстрока из активного url и она не равняется просто '/' или подстрока эквивалентна только '/'
+            if ((route.route.includes(href) && href !== '/') || (route.route === '/' && href === '/')) {
+                // то для успешной проверки будет добавлять айтему класс active
+                item.classList.add('checked');
+            } else {
+                // если такого совпадения нет, то будем удалять класс active
+                item.classList.remove('checked');
+            }
+        });
     }
 }
