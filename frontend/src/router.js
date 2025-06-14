@@ -3,6 +3,7 @@ import {Login} from "./components/auth/login.js";
 import {SignUp} from "./components/auth/sign-up.js";
 import {AuthTokens} from "./utils/auth-utils.js";
 import {Logout} from "./components/auth/logout.js";
+import {Layout} from "./components/layout.js";
 
 export class Router {
     constructor() {
@@ -223,30 +224,13 @@ export class Router {
                 newRoute.load();
             }
 
-            if(newRoute.useLayout) {
+            if (newRoute.useLayout) {
                 new Logout(this.openNewRouteAutomatic.bind(this));
-                this.activateMenuItem(newRoute);
+                new Layout();
             }
 
         } else {
             window.location = '/404';
         }
-    }
-
-    // функция для выделения активного пункта меню
-    activateMenuItem (route) {
-        // запрашиваем все пункты меню по цепочке классов и используем цикл forEach где в item будет попадать наш nav-link
-        document.querySelectorAll('.sidebar .nav-link').forEach(item => {
-            // получаем в переменную href атрибут href из .nav-link
-            const href = item.getAttribute('href');
-            // проверяем, что в роуте присутствует подстрока из активного url и она не равняется просто '/' или подстрока эквивалентна только '/'
-            if ((route.route.includes(href) && href !== '/') || (route.route === '/' && href === '/')) {
-                // то для успешной проверки будет добавлять айтему класс active
-                item.classList.add('checked');
-            } else {
-                // если такого совпадения нет, то будем удалять класс active
-                item.classList.remove('checked');
-            }
-        });
     }
 }

@@ -36,6 +36,10 @@ body {
     fill: #ffffff;
 }
 
+details summary .nav-link {
+    border-radius: 0 !important;
+}
+
 details summary {
     list-style-type: none
 }
@@ -49,6 +53,10 @@ summary::after {
     transform: rotate(180deg);
 }
 
+details[open] {
+    border: 1px solid #0D6EFD
+}
+
 details[open] summary::after {
     content: '\f078';
     font-family: 'Font Awesome 5 Free';
@@ -57,45 +65,8 @@ details[open] summary::after {
     transform: rotate(180deg);
 }
 
-.balance {
-    font-size: 14px;
-    font-weight: 500;
-    color: #052c65;
-}
-
-.balance span {
-    font-weight: 500;
-    color: #0d6efd;
-}
-
-.person-sandbar strong {
-    color: #052c65;
-}
-
-.person-sandbar {
-    position: relative;
-}
-
-.person-sandbar i {
-    background-color: #d9d9d9;
-    position: relative;
-}
-
-.exit-layout {
-    display: none;
-    background: #0d6efd;
-    color: #ffffff;
-    padding: 4px;
-    position: absolute;
-    top: -65px;
-    left: 0;
-    width: 86%;
-    line-height: 36px;
-}
-
-.exit-layout:hover {
-    background: #DC3545;
-    color: #ffffff;
+.checked.rounded .nav-link:hover {
+    color: #ffffff !important;
 }
 
 .burger {
@@ -144,8 +115,6 @@ li.checked a {
 
 li.checked-category a{
     background-color: #0d6efd;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
     color: white;
 }
 
@@ -157,10 +126,7 @@ details.checked {
         color: white;
     }
 }
-.nav-pills details .nav-link {
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-}
+
 .checked {
     .nav-link:focus, .nav-link:hover {
         color: white;
@@ -181,6 +147,47 @@ details.checked {
 
 .nav-pills .rounded .open {
     border-radius: 0!important;
+}
+
+.balance {
+    font-size: 14px;
+    font-weight: 500;
+    color: #052c65;
+}
+
+.balance span {
+    font-weight: 500;
+    color: #0d6efd;
+}
+
+.person-sandbar strong {
+    color: #052c65;
+}
+
+.person-sandbar {
+    position: relative;
+}
+
+.person-sandbar i {
+    background-color: #d9d9d9;
+    position: relative;
+}
+
+.exit-layout {
+    display: none;
+    background: #0d6efd;
+    color: #ffffff;
+    padding: 4px;
+    position: absolute;
+    top: -65px;
+    left: 0;
+    width: 86%;
+    line-height: 36px;
+}
+
+.exit-layout:hover {
+    background: #DC3545;
+    color: #ffffff;
 }
 
 @media (max-width: 1000px) {
