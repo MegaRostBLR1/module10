@@ -1,20 +1,16 @@
 import {config} from "../../config/config.js";
-import {AuthTokens} from "../../utils/auth-utils.js";
-import {Validation} from "../../utils/validation.js";
-import {FormUtils} from "../../utils/reset-validation.js";
+import {AuthTokens} from "../utils/auth-utils.js";
+import {Validation} from "../utils/validation.js";
+import {FormUtils} from "../utils/reset-validation.js";
 
 export class SignUp {
     password = '';
 
     constructor(openNewRouteAutomatic) {
         this.openNewRouteAutomatic = openNewRouteAutomatic;
-        this.inputsElement = document.querySelectorAll('.form-floating input');
+        this.inputsElement = document.querySelectorAll('.form-floating  input');
         this.errorSignUp = document.getElementById('error-singUp');
         document.getElementById("singUpBtn").addEventListener("click", this.signUp.bind(this));
-
-        document.getElementById("signUpInputPassword")?.addEventListener("input", (e) => {
-            this.password = e.target.value;
-        });
     }
 
     async signUp() {
@@ -30,7 +26,9 @@ export class SignUp {
         }
 
         // Если валидация прошла, пытаемся зарегистрироваться
-        try {
+        if (Validation.validForm(this.inputsElement, this.password)) {
+            const date = Validation.validForm(this.inputsElement);
+
             const response = await fetch(config.api + '/signup', {
                 method: 'POST',
                 headers: {
@@ -38,39 +36,29 @@ export class SignUp {
                     'Accept': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: validationResult.nameInputElement,
-                    lastName: validationResult.lastNameInputElement,
-                    email: validationResult.emailInputElement,
-                    password: validationResult.passwordInputElement,
-                    passwordRepeat: validationResult.passwordReplaceInputElement
+                    name: date.nameInputElement,
+                    lastName: date.lastNameInputElement,
+                    email: date.emailInputElement,
+                    password: date.passwordInputElement,
+                    passwordRepeat: date.passwordReplaceInputElement
                 })
-            });
+            })
 
             const result = await response.json();
 
             if (!result.user) {
-                this.errorSignUp.innerText = result.message || 'Ошибка регистрации';
+                this.errorSignUp.innerText = "Ошибка регистрации";
                 return;
+            } else {
+                this.errorSignUp.innerText = '';
             }
 
-            // Если регистрация успешна, получаем токены
-            const resultToken = await AuthTokens.getTokensAfterRegistration(
-                result.user.email,
-                validationResult.passwordInputElement
-            );
+            await AuthTokens.getTokensAfterRegistration(result.user.email, date.passwordInputElement);
 
-            if (resultToken.error) {
-                this.errorSignUp.innerText = resultToken.message;
-                return;
-            }
-
-            // Если все успешно, перенаправляем
-            this.errorSignUp.innerText = '';
             this.openNewRouteAutomatic('/');
 
-        } catch (error) {
-            this.errorSignUp.innerText = 'Ошибка соединения с сервером';
-            console.error('SignUp error:', error);
+        } else {
+            alert('Ошибка регистрации. Попробуйте снова!');
         }
     }
 }
